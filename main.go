@@ -7,11 +7,12 @@ import
   "io/ioutil"
   "log"
   "net/http"
+  "os"
 )
 
 type input struct {
-  index int
-  data string
+  Index int
+  Data string
 }
 
 func create(w http.ResponseWriter, r *http.Request) {
@@ -24,12 +25,20 @@ func create(w http.ResponseWriter, r *http.Request) {
   if err != nil {
     panic(err)
   }
-  if fromReq.index == 0 {
+  if fromReq.Index == 0 {
     fmt.Print(w, "Request received without index.")
     fmt.Fprint(w, "An index is required to create a doc.")
     panic("An index is required to create a doc.")
   }
-  fmt.Println("continue with file write")
+  filename := fmt.Sprintf("data", string(fromReq.Index), ".json")
+  file, err := os.Create(filename)
+  if err != nil {
+    panic(err)
+  }
+  defer file.Close()
+  contents := fmt.Sprintf("{\"Index:\":\"", string(fromReq.Index), "\",\"Data\":\"", fromReq.Data, "\"}")
+  file.WriteString(contents)
+  fmt.Println("file write complete")
 }
 
 func main() {
