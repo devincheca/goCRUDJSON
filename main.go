@@ -11,7 +11,7 @@ import
 )
 
 type input struct {
-  Index int
+  Index string
   Data string
 }
 
@@ -25,20 +25,22 @@ func create(w http.ResponseWriter, r *http.Request) {
   if err != nil {
     panic(err)
   }
-  if fromReq.Index == 0 {
+  if fromReq.Index == "" {
     fmt.Print(w, "Request received without index.")
     fmt.Fprint(w, "An index is required to create a doc.")
     panic("An index is required to create a doc.")
   }
-  filename := fmt.Sprintf("data", string(fromReq.Index), ".json")
+  filename := fmt.Sprintf("data/data" + fromReq.Index + ".json")
+  fmt.Println(filename)
   file, err := os.Create(filename)
   if err != nil {
     panic(err)
   }
   defer file.Close()
-  contents := fmt.Sprintf("{\"Index:\":\"", string(fromReq.Index), "\",\"Data\":\"", fromReq.Data, "\"}")
+  contents := fmt.Sprintf("{\"Index:\":\"" + fromReq.Index + "\",\"Data\":\"" + fromReq.Data + "\"}")
   file.WriteString(contents)
-  fmt.Println("file write complete")
+  fmt.Println("File write complete")
+  fmt.Fprint(w, "File write complete")
 }
 
 func main() {
