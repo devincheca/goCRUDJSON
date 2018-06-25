@@ -11,12 +11,12 @@ import
 )
 
 type input struct {
-  Index string
-  Data string
+  Key string
+  Value string
 }
 
 type query struct {
-  Index string
+  Key string
 }
 
 func create(w http.ResponseWriter, r *http.Request) {
@@ -29,18 +29,18 @@ func create(w http.ResponseWriter, r *http.Request) {
   if err != nil {
     panic(err)
   }
-  if fromReq.Index == "" {
-    fmt.Print(w, "Request received without index.")
-    fmt.Fprint(w, "An index is required to create a doc.")
-    panic("An index is required to create a doc.")
+  if fromReq.Key == "" {
+    fmt.Print(w, "Request received without key.")
+    fmt.Fprint(w, "A key is required to create a doc.")
+    panic("A key is required to create a doc.")
   }
-  filename := fmt.Sprintf("data/data" + fromReq.Index + ".json")
+  filename := fmt.Sprintf("data/data" + fromReq.Key + ".json")
   file, err := os.Create(filename)
   if err != nil {
     panic(err)
   }
   defer file.Close()
-  contents := fmt.Sprintf("{\"Index:\":\"" + fromReq.Index + "\",\"Data\":\"" + fromReq.Data + "\"}")
+  contents := fmt.Sprintf("{\"Index:\":\"" + fromReq.Key + "\",\"Data\":\"" + fromReq.Value + "\"}")
   file.WriteString(contents)
   fmt.Println(filename + " write complete")
   fmt.Fprint(w, filename + " write complete")
@@ -56,7 +56,7 @@ func read(w http.ResponseWriter, r *http.Request) {
   if err != nil {
     panic(err)
   }
-  filename := fmt.Sprintf("data/data" + fromReq.Index + ".json")
+  filename := fmt.Sprintf("data/data" + fromReq.Key + ".json")
   stream, err := ioutil.ReadFile(filename)
   if err != nil {
     panic(err)
